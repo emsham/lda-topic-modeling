@@ -1,155 +1,141 @@
-# Latent Dirichlet Allocation (LDA) Implementation using Coordinate Ascent Variational Inference
+# LDA Topic Modeling via Coordinate Ascent Variational Inference
 
-A complete implementation of Latent Dirichlet Allocation (LDA) topic modeling using Coordinate Ascent Variational Inference (CAVI) from scratch in Python. This project demonstrates advanced probabilistic machine learning techniques for unsupervised topic discovery in text corpora.
+A from-scratch implementation of **Latent Dirichlet Allocation (LDA)** using **Coordinate Ascent Variational Inference (CAVI)** in Python. Developed as a class research project for the PhD-level *Probabilistic Models and Machine Learning* course at Columbia University.
 
-## Project Overview
+## Overview
 
-This project implements LDA, a generative probabilistic model for topic modeling, using variational inference optimization. The implementation includes:
-
-- **Custom LDA with CAVI**: Full implementation of the coordinate ascent variational inference algorithm
-- **Topic Discovery**: Automatic identification of latent topics in document collections
-- **Model Selection**: Optimal number of topics selection using held-out likelihood
-- **Comprehensive Visualization**: Multiple visualization tools for model interpretation
-
-## Dataset
-
-The project analyzes **NEURIPS conference abstracts**, processing academic papers to discover underlying research topics and themes in machine learning and AI.
-
-## Key Features
-
-### Core Implementation
-
-- **LDA_CAVI Class**: Complete implementation of LDA with variational inference
-- **Evidence Lower Bound (ELBO)**: Convergence monitoring and optimization tracking
-- **Model Parameters**: Automatic updates of θ (topic-document), β (word-topic), and φ (word-topic assignment) distributions
-- **Hyperparameter Tuning**: Configurable Dirichlet priors (α, η)
-
-### Advanced Functionality
-
-- **Optimal K Selection**: Automated selection of optimal number of topics using cross-validation
-- **Predictive Likelihood**: Held-out data evaluation for model comparison
-- **Text Preprocessing**: Custom preprocessing pipeline with stop word removal and vectorization
-- **Convergence Detection**: Automated convergence checking with configurable thresholds
-
-### Visualization Suite
-
-- **Topic Word Clouds**: Top words visualization for each discovered topic
-- **Parameter Heatmaps**: Visual representation of λ, γ, β, and θ parameters
-- **ELBO Convergence Plots**: Training progress monitoring
-- **Model Comparison**: Likelihood comparison across different K values
-
-## Technical Stack
-
-- **Python 3.x**
-- **NumPy**: Numerical computations and matrix operations
-- **Pandas**: Data manipulation and analysis
-- **SciPy**: Statistical functions (digamma, gamma functions)
-- **Scikit-learn**: Text preprocessing and vectorization
-- **Matplotlib/Seaborn**: Data visualization
-- **Regular Expressions**: Text preprocessing
-
-## Getting Started
-
-### Prerequisites
-
-```bash
-pip install numpy pandas scipy scikit-learn matplotlib seaborn
-```
-
-### Usage Example
-
-```python
-from LDA_CAVI import LDA_CAVI, LDA_Visualizer
-
-# Load and preprocess data
-lda_model = LDA_CAVI(document_term_matrix, K=4)
-
-# Fit the model
-lda_model.fit(max_iter=1000)
-
-# Find optimal number of topics
-best_k, likelihoods = lda_model.find_optimal_k(range(1, 11))
-
-# Visualize results
-visualizer = LDA_Visualizer(lda_model, vocabulary)
-visualizer.plot_topics()
-visualizer.plot_elbo(lda_model.elbo_values)
-```
-
-## Results & Analysis
-
-### Model Performance
-
-- **Convergence**: ELBO convergence achieved within 20-30 iterations
-- **Optimal Topics**: Analysis shows optimal K=4 topics for the NEURIPS dataset
-- **Topic Coherence**: Discovered topics show clear thematic separation in machine learning domains
-
-### Key Findings
-
-- **Topic 1**: Deep Learning and Neural Networks
-- **Topic 2**: Optimization and Learning Theory
-- **Topic 3**: Computer Vision and Image Processing
-- **Topic 4**: Natural Language Processing and Text Analysis
-
-## Mathematical Foundation
-
-The implementation is based on the variational inference framework:
-
-**ELBO Optimization**:
-
-```
-L(γ, λ, φ) = E_q[log p(w, z, θ, β)] + H(q)
-```
-
-**Parameter Updates**:
-
-- **λ**: Word-topic distribution parameters
-- **γ**: Document-topic distribution parameters
-- **φ**: Variational topic assignment probabilities
+LDA is a generative probabilistic model that discovers latent topics in document collections. This project implements the full CAVI optimisation loop — including variational parameter updates for **phi** (word-topic assignments), **gamma** (document-topic proportions), and **lambda** (topic-word distributions) — with automatic convergence detection, held-out likelihood evaluation, and a suite of visualisation tools.
 
 ## Project Structure
 
 ```
-├── notebook.ipynb              # Main implementation and analysis
-└── README.md                   # Project documentation
+lda-topic-modeling/
+├── lda_topic_modeling/          # Python package
+│   ├── __init__.py              # Public API exports
+│   ├── model.py                 # LDA_CAVI model (training, inference, evaluation)
+│   ├── preprocessing.py         # Text cleaning, vectorisation, document loading
+│   └── visualization.py         # Plotting utilities (ELBO, topics, heatmaps)
+├── tests/                       # Unit tests (pytest)
+│   ├── test_model.py
+│   ├── test_preprocessing.py
+│   └── test_visualization.py
+├── notebook.ipynb               # Interactive walkthrough and analysis
+├── run.py                       # CLI entry point
+├── pyproject.toml               # Build config and dependencies
+├── requirements.txt             # Runtime dependencies
+├── .gitignore
+└── README.md
 ```
 
-## Experimental Design
+## Installation
 
-1. **Data Preprocessing**: Custom text preprocessing with stop word removal and frequency filtering
-2. **Model Training**: CAVI algorithm with convergence monitoring
-3. **Model Selection**: Cross-validation using held-out likelihood
-4. **Evaluation**: Quantitative analysis using perplexity and likelihood metrics
-5. **Visualization**: Comprehensive visual analysis of learned parameters
+```bash
+# Clone the repository
+git clone https://github.com/<your-username>/lda-topic-modeling.git
+cd lda-topic-modeling
 
-## Educational Value
+# Install in editable mode with dev dependencies
+pip install -e ".[dev]"
+```
 
-This project demonstrates:
+## Dataset
 
-- **Probabilistic Modeling**: Implementation of complex generative models
-- **Variational Inference**: Advanced optimization techniques for intractable posteriors
-- **Topic Modeling**: Practical application of unsupervised learning
-- **Scientific Computing**: Efficient numerical implementations using NumPy/SciPy
+The project analyses **NeurIPS conference paper abstracts** to discover latent research topics. Place the dataset directory (containing one `.txt` file per abstract) at the path expected by the notebook or passed via `--data-dir`.
 
-## Performance Metrics
+You can obtain the NeurIPS abstracts dataset from [Kaggle](https://www.kaggle.com/datasets) or scrape them from the [NeurIPS proceedings](https://papers.nips.cc/).
 
-- **ELBO Convergence**: Monitoring of optimization progress
-- **Held-out Likelihood**: Model generalization evaluation
-- **Topic Coherence**: Qualitative assessment of discovered topics
-- **Computational Efficiency**: Optimized matrix operations for scalability
+## Usage
 
-## Future Enhancements
+### CLI
 
-- Implementation of other inference methods (Gibbs sampling, structured variational inference)
-- Extension to hierarchical topic models (hLDA)
-- Online learning capabilities for streaming data
-- GPU acceleration for large-scale datasets
+Train a model with 4 topics:
+
+```bash
+python run.py --data-dir ./NEURIPS_abstracts --topics 4
+```
+
+Search for the optimal number of topics:
+
+```bash
+python run.py --data-dir ./NEURIPS_abstracts --find-optimal-k 1 10
+```
+
+Custom hyperparameters:
+
+```bash
+python run.py --data-dir ./NEURIPS_abstracts --topics 8 --alpha 0.5 --eta 0.5 --max-iter 500
+```
+
+Full flag reference:
+
+```bash
+python run.py --help
+```
+
+### Notebook
+
+Open `notebook.ipynb` in Jupyter for an interactive walkthrough with inline visualisations. The notebook imports all functionality from the `lda_topic_modeling` package.
+
+```bash
+jupyter notebook notebook.ipynb
+```
+
+### Library API
+
+```python
+from lda_topic_modeling import (
+    LDA_CAVI, LDA_Visualizer,
+    load_documents, build_vectorizer, create_count_dataframe,
+)
+
+# Load and preprocess
+docs = load_documents("./NEURIPS_abstracts")
+vectorizer = build_vectorizer(min_df=0.25, max_df=0.85)
+dtm = create_count_dataframe(docs, vectorizer)
+
+# Train
+model = LDA_CAVI(dtm, K=4, alpha=1.0, eta=1.0)
+model.fit(max_iter=1000)
+
+# Visualise
+vis = LDA_Visualizer(model, vectorizer.get_feature_names_out())
+vis.plot_topics()
+vis.plot_elbo(model.elbo_values)
+
+# Model selection
+best_k, likelihoods = model.find_optimal_k(range(1, 11))
+```
+
+## Implementation Details
+
+| Component | Description |
+|---|---|
+| **Inference** | Coordinate Ascent Variational Inference (CAVI) |
+| **ELBO** | `E_q[log p(w,z,theta,beta)] + H(q)` — monitored each iteration |
+| **Convergence** | Relative ELBO change < epsilon for *n* consecutive iterations |
+| **Model selection** | Held-out log-likelihood over a grid of K values |
+| **Preprocessing** | Lowercasing, punctuation removal, stop-word filtering, TF thresholds |
+| **Evaluation** | Log-likelihood on held-out words from test documents |
+
+## Results Summary
+
+- ELBO convergence typically within 20-30 iterations.
+- Optimal topic count K = 4 for the NeurIPS abstracts corpus (selected via held-out likelihood).
+- Discovered topics show clear thematic separation across machine learning sub-fields (e.g., optimisation theory, deep learning, probabilistic methods, applications).
+
+## Testing
+
+All tests use small synthetic data and require no external datasets.
+
+```bash
+pytest
+```
 
 ## References
 
-- Blei, D. M., Ng, A. Y., & Jordan, M. I. (2003). Latent Dirichlet Allocation
-- Hoffman, M. D., Blei, D. M., Wang, C., & Paisley, J. (2013). Stochastic variational inference
+- Blei, D. M., Ng, A. Y., & Jordan, M. I. (2003). *Latent Dirichlet Allocation*. JMLR.
+- Hoffman, M. D., Blei, D. M., Wang, C., & Paisley, J. (2013). *Stochastic Variational Inference*. JMLR.
 
 ---
 
-_This project was developed as part of PhD coursework in Probabilistic Models and Machine Learning at Columbia University._
+*Developed as a class research project for PhD-level Probabilistic Models and Machine Learning at Columbia University.*
